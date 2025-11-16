@@ -1,0 +1,132 @@
+@model RoomBooking.Models.ApplicationUser
+@{
+    ViewData["Title"] = $"User Details - {Model.Email}";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4>User Information</h4>
+                @if (Model.IsActive)
+                {
+                    <span class="badge bg-success fs-6">Active</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger fs-6">Inactive</span>
+                }
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Email:</strong> @Model.Email<br>
+                        <strong>First Name:</strong> @Model.FirstName<br>
+                        <strong>Last Name:</strong> @Model.LastName
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Phone:</strong> @(Model.PhoneNumber ?? "N/A")<br>
+                        <strong>Address:</strong> @(Model.Address ?? "N/A")<br>
+                        <strong>Date of Birth:</strong> @(Model.DateOfBirth?.ToString("MMMM dd, yyyy") ?? "N/A")
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Created At:</strong> @Model.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")<br>
+                        <strong>Last Login:</strong> @(Model.LastLoginAt?.ToString("MMM dd, yyyy hh:mm tt") ?? "Never")
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Roles:</strong>
+                        @if (ViewBag.UserRoles != null && ((IList<string>)ViewBag.UserRoles).Any())
+                        {
+                            foreach (var role in (IList<string>)ViewBag.UserRoles)
+                            {
+                                <span class="badge bg-primary">@role</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted">No roles assigned</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        @if (ViewBag.Bookings != null && ((IList<RoomBooking.Models.Booking>)ViewBag.Bookings).Any())
+        {
+            <div class="card shadow">
+                <div class="card-header">
+                    <h4>Recent Bookings</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Room</th>
+                                <th>Check-In</th>
+                                <th>Check-Out</th>
+                                <th>Status</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var booking in (IList<RoomBooking.Models.Booking>)ViewBag.Bookings)
+                            {
+                                <tr>
+                                    <td>#@booking.Id</td>
+                                    <td>@booking.Room?.Name</td>
+                                    <td>@booking.CheckInDate.ToString("MMM dd, yyyy")</td>
+                                    <td>@booking.CheckOutDate.ToString("MMM dd, yyyy")</td>
+                                    <td>
+                                        <span class="badge @(booking.Status == RoomBooking.Models.BookingStatus.Confirmed ? "bg-success" : 
+                                                             booking.Status == RoomBooking.Models.BookingStatus.Pending ? "bg-warning" : 
+                                                             booking.Status == RoomBooking.Models.BookingStatus.CheckedIn ? "bg-info" : "bg-secondary")">
+                                            @booking.Status
+                                        </span>
+                                    </td>
+                                    <td>$@booking.FinalAmount</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header">
+                <h5>Actions</h5>
+            </div>
+            <div class="card-body d-grid gap-2">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit User
+                </a>
+                <form asp-action="ToggleStatus" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Toggle user status?')">
+                    @Html.AntiForgeryToken()
+                    @if (Model.IsActive)
+                    {
+                        <button type="submit" class="btn btn-warning w-100">
+                            <i class="fas fa-ban"></i> Deactivate User
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-check"></i> Activate User
+                        </button>
+                    }
+                </form>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
