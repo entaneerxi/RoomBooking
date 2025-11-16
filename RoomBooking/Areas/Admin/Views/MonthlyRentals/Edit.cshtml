@@ -1,0 +1,51 @@
+@model RoomBooking.Models.MonthlyRental
+@{
+    ViewData["Title"] = "Create MonthlyRentals";
+}
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow">
+            <div class="card-header"><h4>Edit</h4></div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="CreatedAt" />
+                    <div class="mb-3">
+                        <label asp-for="BookingId" class="form-label"></label>
+                        <input asp-for="BookingId" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="WaterBill" class="form-label"></label>
+                        <input asp-for="WaterBill" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ElectricityBill" class="form-label"></label>
+                        <input asp-for="ElectricityBill" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="BillingPeriodStart" class="form-label"></label>
+                        <input asp-for="BillingPeriodStart" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="BillingPeriodEnd" class="form-label"></label>
+                        <input asp-for="BillingPeriodEnd" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="PaymentStatus" class="form-label"></label>
+                        <input asp-for="PaymentStatus" class="form-control" />
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Create</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary"><i class="fas fa-times"></i> Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,62 @@
+@model IEnumerable<RoomBooking.Models.Gallery>
+@{
+    ViewData["Title"] = "Manage Gallery Item";
+}
+
+<div class="mb-3">
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Add New Gallery Item
+    </a>
+</div>
+
+<div class="card shadow">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name/Title</th>
+                            <th>Display Order</th>
+                            <th>Active</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.Title</td>
+                                <td>@item.DisplayOrder</td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <i class="fas fa-check text-success"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-times text-danger"></i>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info"><i class="fas fa-eye"></i></a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary"><i class="fas fa-edit"></i></a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger"><i class="fas fa-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">No items found. Add a new Gallery Item to get started.</p>
+        }
+    </div>
+</div>

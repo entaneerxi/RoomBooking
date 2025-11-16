@@ -1,0 +1,89 @@
+@model RoomBooking.Models.Promotion
+@{
+    ViewData["Title"] = $"Promotion Details - {Model.Title}";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4>Promotion Information</h4>
+                @if (Model.IsActive)
+                {
+                    <span class="badge bg-success fs-6">Active</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger fs-6">Inactive</span>
+                }
+            </div>
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <div class="mb-3">
+                        <img src="@Model.ImageUrl" alt="@Model.Title" class="img-fluid rounded" style="max-height: 300px;">
+                    </div>
+                }
+                
+                <div class="mb-3">
+                    <h5>@Model.Title</h5>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <div class="mb-3">
+                        <strong>Description:</strong><br>
+                        <p>@Model.Description</p>
+                    </div>
+                }
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Promo Code:</strong> @Model.PromoCode<br>
+                        <strong>Discount:</strong>
+                        @if (Model.DiscountPercentage > 0)
+                        {
+                            <span>@Model.DiscountPercentage%</span>
+                        }
+                        else if (Model.DiscountAmount > 0)
+                        {
+                            <span>$@Model.DiscountAmount</span>
+                        }
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Start Date:</strong> @Model.StartDate.ToString("MMM dd, yyyy")<br>
+                        <strong>End Date:</strong> @Model.EndDate.ToString("MMM dd, yyyy")<br>
+                        <strong>Display Order:</strong> @Model.DisplayOrder
+                    </div>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.TermsAndConditions))
+                {
+                    <div class="mb-3">
+                        <strong>Terms and Conditions:</strong><br>
+                        <p>@Model.TermsAndConditions</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header">
+                <h5>Actions</h5>
+            </div>
+            <div class="card-body d-grid gap-2">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit Promotion
+                </a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Delete Promotion
+                </a>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

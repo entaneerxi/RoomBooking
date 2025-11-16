@@ -1,0 +1,25 @@
+@model RoomBooking.Models.Gallery
+@{
+    ViewData["Title"] = "Delete Gallery Item";
+}
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4><i class="fas fa-exclamation-triangle"></i> Delete Gallery Item</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">Are you sure you want to delete "@Model.Title"?</div>
+                <form asp-action="Delete" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Confirm Delete</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary"><i class="fas fa-times"></i> Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+@model RoomBooking.Models.MonthlyRental
+@{
+    ViewData["Title"] = $"MonthlyRentals Details";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header"><h4>Details</h4></div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">ID</dt>
+                    <dd class="col-sm-9">@Model.Id</dd>
+                    <dt class="col-sm-3">BookingId</dt>
+                    <dd class="col-sm-9">@Model.BookingId</dd>
+                    <dt class="col-sm-3">WaterBill</dt>
+                    <dd class="col-sm-9">@Model.WaterBill</dd>
+                    <dt class="col-sm-3">ElectricityBill</dt>
+                    <dd class="col-sm-9">@Model.ElectricityBill</dd>
+                    <dt class="col-sm-3">BillingPeriodStart</dt>
+                    <dd class="col-sm-9">@Model.BillingPeriodStart</dd>
+                    <dt class="col-sm-3">BillingPeriodEnd</dt>
+                    <dd class="col-sm-9">@Model.BillingPeriodEnd</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header"><h5>Actions</h5></div>
+            <div class="card-body d-grid gap-2">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</a>
+                <a asp-action="Index" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+            </div>
+        </div>
+    </div>
+</div>

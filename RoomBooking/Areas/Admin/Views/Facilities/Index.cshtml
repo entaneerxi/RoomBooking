@@ -1,0 +1,80 @@
+@model IEnumerable<RoomBooking.Models.Facility>
+@{
+    ViewData["Title"] = "Manage Facilities";
+}
+
+<div class="mb-3">
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Add New Facility
+    </a>
+</div>
+
+<div class="card shadow">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Icon Class</th>
+                            <th>Display Order</th>
+                            <th>Active</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var facility in Model)
+                        {
+                            <tr>
+                                <td>@facility.Name</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(facility.Description))
+                                    {
+                                        @(facility.Description.Substring(0, Math.Min(50, facility.Description.Length)) + (facility.Description.Length > 50 ? "..." : ""))
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(facility.IconClass))
+                                    {
+                                        <i class="@facility.IconClass"></i> @facility.IconClass
+                                    }
+                                </td>
+                                <td>@facility.DisplayOrder</td>
+                                <td>
+                                    @if (facility.IsActive)
+                                    {
+                                        <i class="fas fa-check text-success"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-times text-danger"></i>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Details" asp-route-id="@facility.Id" class="btn btn-outline-info" title="Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@facility.Id" class="btn btn-outline-primary" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@facility.Id" class="btn btn-outline-danger" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">No facilities available. Add a new facility to get started.</p>
+        }
+    </div>
+</div>
