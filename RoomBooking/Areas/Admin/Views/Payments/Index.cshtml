@@ -1,0 +1,67 @@
+@model IEnumerable<RoomBooking.Models.Payment>
+@{
+    ViewData["Title"] = "Manage Payments";
+}
+
+<div class="card shadow">
+    <div class="card-header">
+        <h4>Payment Management</h4>
+        <div class="btn-group mt-2">
+            <a asp-action="Index" class="btn btn-sm btn-outline-primary">All</a>
+            <a asp-action="Index" asp-route-status="@RoomBooking.Models.PaymentStatus.Pending" class="btn btn-sm btn-outline-warning">Pending</a>
+            <a asp-action="Index" asp-route-status="@RoomBooking.Models.PaymentStatus.Paid" class="btn btn-sm btn-outline-success">Paid</a>
+            <a asp-action="Index" asp-route-status="@RoomBooking.Models.PaymentStatus.Failed" class="btn btn-sm btn-outline-danger">Failed</a>
+        </div>
+    </div>
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Payment ID</th>
+                            <th>Booking ID</th>
+                            <th>User</th>
+                            <th>Room</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var payment in Model)
+                        {
+                            <tr>
+                                <td>#@payment.Id</td>
+                                <td>#@payment.BookingId</td>
+                                <td>@payment.User?.Email</td>
+                                <td>@payment.Booking?.Room?.Name</td>
+                                <td>$@payment.Amount</td>
+                                <td>@payment.PaymentMethod?.Name</td>
+                                <td>
+                                    <span class="badge @(payment.Status == RoomBooking.Models.PaymentStatus.Paid ? "bg-success" : 
+                                                         payment.Status == RoomBooking.Models.PaymentStatus.Pending ? "bg-warning" : "bg-danger")">
+                                        @payment.Status
+                                    </span>
+                                </td>
+                                <td>@payment.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@payment.Id" class="btn btn-sm btn-outline-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">No payments found.</p>
+        }
+    </div>
+</div>

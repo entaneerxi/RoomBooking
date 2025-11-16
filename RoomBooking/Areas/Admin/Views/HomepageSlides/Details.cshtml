@@ -1,0 +1,38 @@
+@model RoomBooking.Models.HomepageSlide
+@{
+    ViewData["Title"] = $"HomepageSlides Details";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header"><h4>Details</h4></div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">ID</dt>
+                    <dd class="col-sm-9">@Model.Id</dd>
+                    <dt class="col-sm-3">Title</dt>
+                    <dd class="col-sm-9">@Model.Title</dd>
+                    <dt class="col-sm-3">Subtitle</dt>
+                    <dd class="col-sm-9">@Model.Subtitle</dd>
+                    <dt class="col-sm-3">ImageUrl</dt>
+                    <dd class="col-sm-9">@Model.ImageUrl</dd>
+                    <dt class="col-sm-3">LinkUrl</dt>
+                    <dd class="col-sm-9">@Model.LinkUrl</dd>
+                    <dt class="col-sm-3">ButtonText</dt>
+                    <dd class="col-sm-9">@Model.ButtonText</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header"><h5>Actions</h5></div>
+            <div class="card-body d-grid gap-2">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</a>
+                <a asp-action="Index" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+            </div>
+        </div>
+    </div>
+</div>
