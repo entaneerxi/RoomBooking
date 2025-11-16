@@ -1,0 +1,168 @@
+@model RoomBooking.Models.Booking
+@{
+    ViewData["Title"] = $"Booking #{Model.Id} Details";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4>Booking Information</h4>
+                <span class="badge @(Model.Status == RoomBooking.Models.BookingStatus.Confirmed ? "bg-success" : 
+                                     Model.Status == RoomBooking.Models.BookingStatus.Pending ? "bg-warning" : "bg-info") fs-6">
+                    @Model.Status
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Booking ID:</strong> #@Model.Id<br>
+                        <strong>Type:</strong> @Model.BookingType<br>
+                        <strong>Guests:</strong> @Model.NumberOfGuests
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Created:</strong> @Model.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <h5>Guest Information</h5>
+                <p>
+                    <strong>Name:</strong> @Model.User?.FirstName @Model.User?.LastName<br>
+                    <strong>Email:</strong> @Model.User?.Email<br>
+                    <strong>Phone:</strong> @Model.User?.PhoneNumber
+                </p>
+                
+                <hr>
+                
+                <h5>Room Information</h5>
+                <p>
+                    <strong>Room:</strong> @Model.Room?.Name<br>
+                    <strong>Room Number:</strong> @Model.Room?.RoomNumber<br>
+                    <strong>Type:</strong> @Model.Room?.RoomType
+                </p>
+                
+                <hr>
+                
+                <h5>Dates</h5>
+                <p>
+                    <strong>Check-In:</strong> @Model.CheckInDate.ToString("MMMM dd, yyyy")<br>
+                    <strong>Check-Out:</strong> @Model.CheckOutDate.ToString("MMMM dd, yyyy")
+                </p>
+                
+                @if (Model.SpecialRequests != null)
+                {
+                    <hr>
+                    <h5>Special Requests</h5>
+                    <p>@Model.SpecialRequests</p>
+                }
+            </div>
+        </div>
+        
+        @if (Model.Payments.Any())
+        {
+            <div class="card shadow">
+                <div class="card-header">
+                    <h4>Payment History</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var payment in Model.Payments)
+                            {
+                                <tr>
+                                    <td>@payment.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                    <td>$@payment.Amount</td>
+                                    <td>@payment.PaymentMethod?.Name</td>
+                                    <td>
+                                        <span class="badge @(payment.Status == RoomBooking.Models.PaymentStatus.Paid ? "bg-success" : "bg-warning")">
+                                            @payment.Status
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow mb-3">
+            <div class="card-header">
+                <h5>Amount Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Total:</span>
+                    <strong>$@Model.TotalAmount</strong>
+                </div>
+                @if (Model.DiscountAmount.HasValue && Model.DiscountAmount > 0)
+                {
+                    <div class="d-flex justify-content-between mb-2 text-success">
+                        <span>Discount:</span>
+                        <strong>-$@Model.DiscountAmount</strong>
+                    </div>
+                }
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <strong>Final:</strong>
+                    <strong class="text-primary fs-5">$@Model.FinalAmount</strong>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow">
+            <div class="card-header">
+                <h5>Actions</h5>
+            </div>
+            <div class="card-body d-grid gap-2">
+                @if (Model.Status == RoomBooking.Models.BookingStatus.Pending)
+                {
+                    <form asp-action="ConfirmBooking" method="post" onsubmit="return confirm('Confirm this booking?')">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-check"></i> Confirm Booking
+                        </button>
+                    </form>
+                }
+                @if (Model.Status == RoomBooking.Models.BookingStatus.Confirmed)
+                {
+                    <form asp-action="CheckIn" method="post" onsubmit="return confirm('Check in this guest?')">
+                        <button type="submit" class="btn btn-info w-100">
+                            <i class="fas fa-sign-in-alt"></i> Check In
+                        </button>
+                    </form>
+                }
+                @if (Model.Status == RoomBooking.Models.BookingStatus.CheckedIn)
+                {
+                    <form asp-action="CheckOut" method="post" onsubmit="return confirm('Check out this guest?')">
+                        <button type="submit" class="btn btn-warning w-100">
+                            <i class="fas fa-sign-out-alt"></i> Check Out
+                        </button>
+                    </form>
+                }
+                @if (Model.Status == RoomBooking.Models.BookingStatus.PostponeRequested)
+                {
+                    <form asp-action="ApprovePostpone" method="post" onsubmit="return confirm('Approve postponement request?')">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-check-circle"></i> Approve Postpone
+                        </button>
+                    </form>
+                }
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

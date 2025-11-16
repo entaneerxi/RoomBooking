@@ -1,0 +1,54 @@
+@model IEnumerable<RoomBooking.Models.Facility>
+@{
+    ViewData["Title"] = "Facilities";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Our Facilities</h1>
+    <p class="lead mb-5">Enjoy our premium amenities and services during your stay</p>
+    
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var facility in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrEmpty(facility.ImageUrl))
+                        {
+                            <img src="@facility.ImageUrl" class="card-img-top" alt="@facility.Name" style="height: 200px; object-fit: cover;">
+                        }
+                        else if (!string.IsNullOrEmpty(facility.IconClass))
+                        {
+                            <div class="bg-light text-primary d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="@facility.IconClass fa-4x"></i>
+                            </div>
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                @if (!string.IsNullOrEmpty(facility.IconClass))
+                                {
+                                    <i class="@facility.IconClass me-2"></i>
+                                }
+                                @facility.Name
+                            </h5>
+                            <p class="card-text">@facility.Description</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            Facility information will be available soon.
+        </div>
+    }
+    
+    <div class="mt-5 text-center">
+        <a asp-controller="Rooms" asp-action="Index" class="btn btn-primary btn-lg">
+            <i class="fas fa-door-open"></i> Browse Available Rooms
+        </a>
+    </div>
+</div>

@@ -1,0 +1,98 @@
+@model IEnumerable<RoomBooking.Models.Booking>
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-primary shadow">
+            <div class="card-body">
+                <h5 class="card-title">Total Rooms</h5>
+                <h2>@ViewBag.TotalRooms</h2>
+                <p class="card-text">Available: @ViewBag.AvailableRooms</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-info shadow">
+            <div class="card-body">
+                <h5 class="card-title">Total Bookings</h5>
+                <h2>@ViewBag.TotalBookings</h2>
+                <p class="card-text">Pending: @ViewBag.PendingBookings</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-success shadow">
+            <div class="card-body">
+                <h5 class="card-title">Today's Check-ins</h5>
+                <h2>@ViewBag.TodayCheckIns</h2>
+                <p class="card-text">Check-outs: @ViewBag.TodayCheckOuts</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-warning shadow">
+            <div class="card-body">
+                <h5 class="card-title">Monthly Revenue</h5>
+                <h2>$@ViewBag.MonthlyRevenue</h2>
+                <p class="card-text">This month</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-header">
+        <h4>Recent Bookings</h4>
+    </div>
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Guest</th>
+                            <th>Room</th>
+                            <th>Check-In</th>
+                            <th>Check-Out</th>
+                            <th>Status</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var booking in Model)
+                        {
+                            <tr>
+                                <td>#@booking.Id</td>
+                                <td>@booking.User?.FirstName @booking.User?.LastName</td>
+                                <td>@booking.Room?.Name</td>
+                                <td>@booking.CheckInDate.ToString("MMM dd, yyyy")</td>
+                                <td>@booking.CheckOutDate.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <span class="badge @(booking.Status == RoomBooking.Models.BookingStatus.Confirmed ? "bg-success" : 
+                                                         booking.Status == RoomBooking.Models.BookingStatus.Pending ? "bg-warning" : "bg-info")">
+                                        @booking.Status
+                                    </span>
+                                </td>
+                                <td>$@booking.FinalAmount</td>
+                                <td>
+                                    <a asp-area="Admin" asp-controller="Bookings" asp-action="Details" asp-route-id="@booking.Id" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">No recent bookings</p>
+        }
+    </div>
+</div>

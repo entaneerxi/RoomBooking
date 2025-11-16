@@ -1,0 +1,111 @@
+@model IEnumerable<RoomBooking.Models.Booking>
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">My Bookings</h1>
+    
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var booking in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><strong>Booking #@booking.Id</strong></span>
+                            <span class="badge @(booking.Status == RoomBooking.Models.BookingStatus.Confirmed ? "bg-success" : 
+                                                 booking.Status == RoomBooking.Models.BookingStatus.Pending ? "bg-warning" : 
+                                                 booking.Status == RoomBooking.Models.BookingStatus.Cancelled ? "bg-danger" : "bg-info")">
+                                @booking.Status
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">@booking.Room?.Name</h5>
+                            <p class="text-muted small">@booking.Room?.RoomNumber</p>
+                            
+                            <div class="row mb-2">
+                                <div class="col-6">
+                                    <small class="text-muted">Check-In</small><br>
+                                    <strong>@booking.CheckInDate.ToString("MMM dd, yyyy")</strong>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Check-Out</small><br>
+                                    <strong>@booking.CheckOutDate.ToString("MMM dd, yyyy")</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-2">
+                                <span class="badge bg-info">@booking.BookingType</span>
+                                <span class="badge bg-secondary">@booking.NumberOfGuests guests</span>
+                            </div>
+                            
+                            <hr>
+                            
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Total Amount:</span>
+                                <strong>$@booking.TotalAmount</strong>
+                            </div>
+                            @if (booking.DiscountAmount.HasValue && booking.DiscountAmount.Value > 0)
+                            {
+                                <div class="d-flex justify-content-between mb-2 text-success">
+                                    <span>Discount:</span>
+                                    <strong>-$@booking.DiscountAmount</strong>
+                                </div>
+                            }
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Final Amount:</span>
+                                <strong class="text-primary">$@booking.FinalAmount</strong>
+                            </div>
+                            
+                            @if (booking.Payments.Any())
+                            {
+                                <div class="alert alert-info small mb-2">
+                                    <i class="fas fa-info-circle"></i> Payment Status: 
+                                    @{
+                                        var lastPayment = booking.Payments.OrderByDescending(p => p.CreatedAt).FirstOrDefault();
+                                        <span class="badge @(lastPayment?.Status == RoomBooking.Models.PaymentStatus.Paid ? "bg-success" : "bg-warning")">
+                                            @lastPayment?.Status
+                                        </span>
+                                    }
+                                </div>
+                            }
+                            
+                            <div class="d-grid gap-2">
+                                <a asp-action="Details" asp-route-id="@booking.Id" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-eye"></i> View Details
+                                </a>
+                                @if (booking.Status == RoomBooking.Models.BookingStatus.Confirmed || booking.Status == RoomBooking.Models.BookingStatus.Pending)
+                                {
+                                    <a asp-action="RequestPostpone" asp-route-id="@booking.Id" class="btn btn-outline-warning btn-sm">
+                                        <i class="fas fa-calendar-alt"></i> Request Postpone
+                                    </a>
+                                }
+                                @if (!booking.Payments.Any() || booking.Payments.All(p => p.Status != RoomBooking.Models.PaymentStatus.Paid))
+                                {
+                                    <a asp-controller="Payments" asp-action="Create" asp-route-bookingId="@booking.Id" class="btn btn-success btn-sm">
+                                        <i class="fas fa-credit-card"></i> Make Payment
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                        <div class="card-footer text-muted small">
+                            Booked on @booking.CreatedAt.ToString("MMM dd, yyyy")
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <h4><i class="fas fa-info-circle"></i> No Bookings Yet</h4>
+            <p>You haven't made any bookings. Browse our available rooms and book now!</p>
+            <a asp-controller="Rooms" asp-action="Index" class="btn btn-primary">
+                <i class="fas fa-door-open"></i> Browse Rooms
+            </a>
+        </div>
+    }
+</div>

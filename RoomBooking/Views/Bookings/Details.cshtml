@@ -1,0 +1,183 @@
+@model RoomBooking.Models.Booking
+@{
+    ViewData["Title"] = $"Booking #{Model.Id}";
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="MyBookings">My Bookings</a></li>
+            <li class="breadcrumb-item active">Booking #@Model.Id</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h4>Booking Details</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Booking ID</h6>
+                            <p>#@Model.Id</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Status</h6>
+                            <span class="badge @(Model.Status == RoomBooking.Models.BookingStatus.Confirmed ? "bg-success" : 
+                                                 Model.Status == RoomBooking.Models.BookingStatus.Pending ? "bg-warning" : 
+                                                 Model.Status == RoomBooking.Models.BookingStatus.Cancelled ? "bg-danger" : "bg-info")">
+                                @Model.Status
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5>Room Information</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Room:</strong> @Model.Room?.Name</p>
+                            <p><strong>Room Number:</strong> @Model.Room?.RoomNumber</p>
+                            <p><strong>Type:</strong> @Model.Room?.RoomType</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Booking Type:</strong> @Model.BookingType</p>
+                            <p><strong>Number of Guests:</strong> @Model.NumberOfGuests</p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5>Dates</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Check-In:</strong> @Model.CheckInDate.ToString("MMMM dd, yyyy")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Check-Out:</strong> @Model.CheckOutDate.ToString("MMMM dd, yyyy")</p>
+                        </div>
+                    </div>
+                    
+                    @if (Model.CheckedInAt.HasValue)
+                    {
+                        <p><strong>Checked In:</strong> @Model.CheckedInAt.Value.ToString("MMMM dd, yyyy hh:mm tt")</p>
+                    }
+                    @if (Model.CheckedOutAt.HasValue)
+                    {
+                        <p><strong>Checked Out:</strong> @Model.CheckedOutAt.Value.ToString("MMMM dd, yyyy hh:mm tt")</p>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(Model.SpecialRequests))
+                    {
+                        <hr>
+                        <h5>Special Requests</h5>
+                        <p>@Model.SpecialRequests</p>
+                    }
+                    
+                    @if (Model.Status == RoomBooking.Models.BookingStatus.PostponeRequested && Model.NewCheckInDate.HasValue && Model.NewCheckOutDate.HasValue)
+                    {
+                        <hr>
+                        <div class="alert alert-warning">
+                            <h5>Postponement Request</h5>
+                            <p><strong>New Check-In:</strong> @Model.NewCheckInDate.Value.ToString("MMMM dd, yyyy")</p>
+                            <p><strong>New Check-Out:</strong> @Model.NewCheckOutDate.Value.ToString("MMMM dd, yyyy")</p>
+                            <p><strong>Reason:</strong> @Model.PostponeReason</p>
+                            <p class="mb-0"><em>Waiting for admin approval</em></p>
+                        </div>
+                    }
+                </div>
+            </div>
+            
+            @if (Model.Payments.Any())
+            {
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h4>Payment History</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Method</th>
+                                        <th>Status</th>
+                                        <th>Reference</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var payment in Model.Payments.OrderByDescending(p => p.CreatedAt))
+                                    {
+                                        <tr>
+                                            <td>@payment.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                            <td>$@payment.Amount</td>
+                                            <td>@payment.PaymentMethod?.Name</td>
+                                            <td>
+                                                <span class="badge @(payment.Status == RoomBooking.Models.PaymentStatus.Paid ? "bg-success" : "bg-warning")">
+                                                    @payment.Status
+                                                </span>
+                                            </td>
+                                            <td>@payment.TransactionReference</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h5>Amount Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Total Amount:</span>
+                        <strong>$@Model.TotalAmount</strong>
+                    </div>
+                    @if (Model.DiscountAmount.HasValue && Model.DiscountAmount.Value > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-2 text-success">
+                            <span>Discount:</span>
+                            <strong>-$@Model.DiscountAmount</strong>
+                        </div>
+                    }
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span><strong>Final Amount:</strong></span>
+                        <strong class="text-primary fs-5">$@Model.FinalAmount</strong>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5>Actions</h5>
+                </div>
+                <div class="card-body d-grid gap-2">
+                    @if (Model.Status == RoomBooking.Models.BookingStatus.Confirmed || Model.Status == RoomBooking.Models.BookingStatus.Pending)
+                    {
+                        <a asp-action="RequestPostpone" asp-route-id="@Model.Id" class="btn btn-warning">
+                            <i class="fas fa-calendar-alt"></i> Request Postpone
+                        </a>
+                    }
+                    @if (!Model.Payments.Any() || Model.Payments.All(p => p.Status != RoomBooking.Models.PaymentStatus.Paid))
+                    {
+                        <a asp-controller="Payments" asp-action="Create" asp-route-bookingId="@Model.Id" class="btn btn-success">
+                            <i class="fas fa-credit-card"></i> Make Payment
+                        </a>
+                    }
+                    <a asp-action="MyBookings" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Bookings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

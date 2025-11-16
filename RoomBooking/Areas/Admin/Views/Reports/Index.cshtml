@@ -1,0 +1,86 @@
+@{
+    ViewData["Title"] = "Reports";
+}
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-file-alt"></i> Booking Report</h5>
+            </div>
+            <div class="card-body">
+                <p>Generate a detailed report of all bookings within a date range.</p>
+                <form asp-action="BookingReport" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" name="startDate" class="form-control" required value="@DateTime.Today.AddDays(-30).ToString("yyyy-MM-dd")">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">End Date</label>
+                        <input type="date" name="endDate" class="form-control" required value="@DateTime.Today.ToString("yyyy-MM-dd")">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-download"></i> Generate PDF
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h5><i class="fas fa-calendar-alt"></i> Monthly Report</h5>
+            </div>
+            <div class="card-body">
+                <p>Generate a monthly summary report including revenue and statistics.</p>
+                <form asp-action="MonthlyReport" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Year</label>
+                        <input type="number" name="year" class="form-control" required value="@DateTime.Today.Year" min="2020" max="2099">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Month</label>
+                        <select name="month" class="form-select" required>
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                <option value="@i" selected="@(i == DateTime.Today.Month)">@(new DateTime(2000, i, 1).ToString("MMMM"))</option>
+                            }
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-download"></i> Generate PDF
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark">
+                <h5><i class="fas fa-bolt"></i> Utilities Report</h5>
+            </div>
+            <div class="card-body">
+                <p>Generate a report of water and electricity usage and payments.</p>
+                <form asp-action="UtilitiesReport" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" name="startDate" class="form-control" required value="@DateTime.Today.AddDays(-30).ToString("yyyy-MM-dd")">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">End Date</label>
+                        <input type="date" name="endDate" class="form-control" required value="@DateTime.Today.ToString("yyyy-MM-dd")">
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100">
+                        <i class="fas fa-download"></i> Generate PDF
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-info">
+    <i class="fas fa-info-circle"></i> Reports will be generated as PDF files and downloaded automatically.
+</div>

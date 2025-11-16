@@ -1,0 +1,76 @@
+@model RoomBooking.Models.Booking
+@{
+    ViewData["Title"] = "Request Postponement";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h4>Request Booking Postponement</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> You can request to change your booking dates. Your request will be reviewed by our staff.
+                    </div>
+                    
+                    <h5>Current Booking</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Room:</strong> @Model.Room?.Name</p>
+                            <p><strong>Current Check-In:</strong> @Model.CheckInDate.ToString("MMMM dd, yyyy")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Room Number:</strong> @Model.Room?.RoomNumber</p>
+                            <p><strong>Current Check-Out:</strong> @Model.CheckOutDate.ToString("MMMM dd, yyyy")</p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <form asp-action="RequestPostpone" method="post">
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                        
+                        <h5>New Dates</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">New Check-In Date</label>
+                                <input type="date" name="newCheckInDate" class="form-control" required value="@Model.CheckInDate.ToString("yyyy-MM-dd")" />
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">New Check-Out Date</label>
+                                <input type="date" name="newCheckOutDate" class="form-control" required value="@Model.CheckOutDate.ToString("yyyy-MM-dd")" />
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Reason for Postponement</label>
+                            <textarea name="postponeReason" class="form-control" rows="4" required placeholder="Please explain why you need to postpone your booking..."></textarea>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-paper-plane"></i> Submit Request
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            var today = new Date().toISOString().split('T')[0];
+            $('input[type="date"]').attr('min', today);
+        });
+    </script>
+}

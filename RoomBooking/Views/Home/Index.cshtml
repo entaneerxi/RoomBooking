@@ -1,8 +1,191 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Hero Section / Slides -->
+@if (ViewBag.Slides != null && ((List<RoomBooking.Models.HomepageSlide>)ViewBag.Slides).Any())
+{
+    <div id="heroCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            @for (int i = 0; i < ((List<RoomBooking.Models.HomepageSlide>)ViewBag.Slides).Count; i++)
+            {
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")"></button>
+            }
+        </div>
+        <div class="carousel-inner">
+            @{
+                int slideIndex = 0;
+                foreach (var slide in ViewBag.Slides as List<RoomBooking.Models.HomepageSlide>)
+                {
+                    <div class="carousel-item @(slideIndex == 0 ? "active" : "")" style="height: 500px;">
+                        <img src="@slide.ImageUrl" class="d-block w-100" alt="@slide.Title" style="height: 100%; object-fit: cover;">
+                        <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-3 rounded">
+                            <h2>@slide.Title</h2>
+                            @if (!string.IsNullOrEmpty(slide.Subtitle))
+                            {
+                                <p>@slide.Subtitle</p>
+                            }
+                            @if (!string.IsNullOrEmpty(slide.LinkUrl) && !string.IsNullOrEmpty(slide.ButtonText))
+                            {
+                                <a href="@slide.LinkUrl" class="btn btn-primary">@slide.ButtonText</a>
+                            }
+                        </div>
+                    </div>
+                    slideIndex++;
+                }
+            }
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+}
+else
+{
+    <div class="bg-primary text-white py-5 mb-5">
+        <div class="container text-center">
+            <h1 class="display-4">Welcome to Room Booking System</h1>
+            <p class="lead">Find and book your perfect room</p>
+            <a asp-controller="Rooms" asp-action="Index" class="btn btn-light btn-lg">Browse Rooms</a>
+        </div>
+    </div>
+}
+
+<!-- Featured Rooms -->
+@if (ViewBag.FeaturedRooms != null && ((List<RoomBooking.Models.Room>)ViewBag.FeaturedRooms).Any())
+{
+    <div class="container mb-5">
+        <h2 class="mb-4">Featured Rooms</h2>
+        <div class="row">
+            @foreach (var room in (ViewBag.FeaturedRooms as List<RoomBooking.Models.Room>).Take(3))
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrEmpty(room.ImageUrl))
+                        {
+                            <img src="@room.ImageUrl" class="card-img-top" alt="@room.Name" style="height: 200px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="fas fa-door-open fa-3x"></i>
+                            </div>
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@room.Name</h5>
+                            <p class="card-text">@room.Description</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-primary"><strong>$@room.DailyRate</strong>/day</span>
+                                <a asp-controller="Rooms" asp-action="Details" asp-route-id="@room.Id" class="btn btn-sm btn-outline-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="text-center">
+            <a asp-controller="Rooms" asp-action="Index" class="btn btn-primary">View All Rooms</a>
+        </div>
+    </div>
+}
+
+<!-- Promotions -->
+@if (ViewBag.Promotions != null && ((List<RoomBooking.Models.Promotion>)ViewBag.Promotions).Any())
+{
+    <div class="container mb-5">
+        <h2 class="mb-4">Current Promotions</h2>
+        <div class="row">
+            @foreach (var promo in (ViewBag.Promotions as List<RoomBooking.Models.Promotion>))
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-primary shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">@promo.Title</h5>
+                            <p class="card-text">@promo.Description</p>
+                            @if (promo.DiscountPercentage.HasValue)
+                            {
+                                <div class="alert alert-success">
+                                    <strong>@promo.DiscountPercentage%</strong> OFF
+                                </div>
+                            }
+                            <a asp-controller="Promotions" asp-action="Details" asp-route-id="@promo.Id" class="btn btn-sm btn-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="text-center">
+            <a asp-controller="Promotions" asp-action="Index" class="btn btn-primary">View All Promotions</a>
+        </div>
+    </div>
+}
+
+<!-- Facilities -->
+@if (ViewBag.Facilities != null && ((List<RoomBooking.Models.Facility>)ViewBag.Facilities).Any())
+{
+    <div class="bg-light py-5 mb-5">
+        <div class="container">
+            <h2 class="mb-4 text-center">Our Facilities</h2>
+            <div class="row">
+                @foreach (var facility in (ViewBag.Facilities as List<RoomBooking.Models.Facility>))
+                {
+                    <div class="col-md-4 col-lg-2 mb-3 text-center">
+                        @if (!string.IsNullOrEmpty(facility.IconClass))
+                        {
+                            <i class="@facility.IconClass fa-3x text-primary mb-2"></i>
+                        }
+                        <h6>@facility.Name</h6>
+                    </div>
+                }
+            </div>
+            <div class="text-center mt-4">
+                <a asp-controller="Facilities" asp-action="Index" class="btn btn-outline-primary">View All Facilities</a>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Contact Info -->
+@if (ViewBag.ContactInfo != null)
+{
+    var contact = ViewBag.ContactInfo as RoomBooking.Models.ContactInfo;
+    <div class="container mb-5">
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-map-marker-alt text-primary"></i> @contact.Address</p>
+                @if (!string.IsNullOrEmpty(contact.Phone))
+                {
+                    <p><i class="fas fa-phone text-primary"></i> @contact.Phone</p>
+                }
+                @if (!string.IsNullOrEmpty(contact.Email))
+                {
+                    <p><i class="fas fa-envelope text-primary"></i> @contact.Email</p>
+                }
+            </div>
+            <div class="col-md-6">
+                @if (ViewBag.SocialMedia != null && ((List<RoomBooking.Models.SocialMedia>)ViewBag.SocialMedia).Any())
+                {
+                    <h3>Follow Us</h3>
+                    <div>
+                        @foreach (var social in ViewBag.SocialMedia as List<RoomBooking.Models.SocialMedia>)
+                        {
+                            <a href="@social.Url" class="btn btn-outline-primary btn-sm me-2 mb-2" target="_blank">
+                                @if (!string.IsNullOrEmpty(social.IconClass))
+                                {
+                                    <i class="@social.IconClass"></i>
+                                }
+                                @social.Platform
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
