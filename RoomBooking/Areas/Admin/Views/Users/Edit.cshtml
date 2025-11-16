@@ -1,0 +1,110 @@
+@model RoomBooking.Models.ApplicationUser
+@{
+    ViewData["Title"] = $"Edit User - {Model.Email}";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header">
+                <h4>Edit User</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" required />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FirstName" class="form-label"></label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="LastName" class="form-label"></label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label"></label>
+                        <textarea asp-for="Address" class="form-control" rows="2"></textarea>
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="DateOfBirth" class="form-label"></label>
+                        <input asp-for="DateOfBirth" type="date" class="form-control" />
+                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                        <label asp-for="IsActive" class="form-check-label"></label>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5 class="mb-3">User Roles</h5>
+                    <div class="mb-3">
+                        @if (ViewBag.AllRoles != null)
+                        {
+                            foreach (var role in (IList<string>)ViewBag.AllRoles)
+                            {
+                                var isChecked = ViewBag.UserRoles != null && ((IList<string>)ViewBag.UserRoles).Contains(role);
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="roles" value="@role" id="role_@role" @(isChecked ? "checked" : "") />
+                                    <label class="form-check-label" for="role_@role">
+                                        @role
+                                    </label>
+                                </div>
+                            }
+                        }
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header">
+                <h5>User Info</h5>
+            </div>
+            <div class="card-body">
+                <p>
+                    <strong>User ID:</strong><br>
+                    <small class="text-muted">@Model.Id</small>
+                </p>
+                <p>
+                    <strong>Created:</strong><br>
+                    @Model.CreatedAt.ToString("MMM dd, yyyy")
+                </p>
+                <p>
+                    <strong>Last Login:</strong><br>
+                    @(Model.LastLoginAt?.ToString("MMM dd, yyyy") ?? "Never")
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
