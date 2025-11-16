@@ -19,4 +19,121 @@ html {
 
 body {
   margin-bottom: 60px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Logo styling */
+.navbar-logo {
+  height: 40px;
+  width: auto;
+}
+
+/* Dark mode toggle button */
+#darkModeToggle {
+  border: none;
+  background: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+#darkModeToggle:hover {
+  transform: scale(1.1);
+}
+
+/* Dark mode styles */
+body.dark-mode {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .navbar-light {
+  background-color: #2d2d2d !important;
+  border-bottom-color: #444 !important;
+}
+
+body.dark-mode .navbar-light .navbar-brand,
+body.dark-mode .navbar-light .nav-link {
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .navbar-light .nav-link:hover {
+  color: #ffffff !important;
+}
+
+body.dark-mode .navbar-toggler-icon {
+  filter: invert(1);
+}
+
+body.dark-mode .card {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+body.dark-mode .table {
+  color: #e0e0e0;
+  background-color: #2d2d2d;
+}
+
+body.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+  background-color: #333;
+}
+
+body.dark-mode .table-hover tbody tr:hover {
+  background-color: #3a3a3a;
+}
+
+body.dark-mode .footer {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  border-top-color: #444 !important;
+}
+
+body.dark-mode .btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+body.dark-mode .btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+  background-color: #3a3a3a;
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+body.dark-mode .form-control:focus,
+body.dark-mode .form-select:focus {
+  background-color: #3a3a3a;
+  border-color: #0d6efd;
+  color: #e0e0e0;
+}
+
+body.dark-mode .modal-content {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+}
+
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer {
+  border-color: #444;
+}
+
+body.dark-mode .list-group-item {
+  background-color: #2d2d2d;
+  border-color: #444;
+  color: #e0e0e0;
+}
+
+body.dark-mode a {
+  color: #6ea8fe;
+}
+
+body.dark-mode a:hover {
+  color: #9ec5fe;
 }

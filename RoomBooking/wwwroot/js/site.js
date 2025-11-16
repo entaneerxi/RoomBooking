@@ -33,8 +33,46 @@ function showConfirmDialog(title, text, confirmCallback) {
     });
 }
 
+// Dark mode functionality
+function initDarkMode() {
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const darkModeIcon = document.getElementById('darkModeIcon');
+    const body = document.body;
+    
+    // Check for saved dark mode preference or default to light mode
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    
+    // Apply saved preference
+    if (isDarkMode) {
+        body.classList.add('dark-mode');
+        darkModeIcon.classList.remove('fa-moon');
+        darkModeIcon.classList.add('fa-sun');
+    }
+    
+    // Toggle dark mode
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('click', function() {
+            body.classList.toggle('dark-mode');
+            
+            // Update icon
+            if (body.classList.contains('dark-mode')) {
+                darkModeIcon.classList.remove('fa-moon');
+                darkModeIcon.classList.add('fa-sun');
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                darkModeIcon.classList.remove('fa-sun');
+                darkModeIcon.classList.add('fa-moon');
+                localStorage.setItem('darkMode', 'false');
+            }
+        });
+    }
+}
+
 // Date picker initialization
 $(document).ready(function() {
+    // Initialize dark mode
+    initDarkMode();
+    
     // Set minimum date for date inputs
     $('input[type="date"]').each(function() {
         if ($(this).attr('min') === undefined) {

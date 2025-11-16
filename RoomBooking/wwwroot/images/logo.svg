@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Hotel/Building Icon -->
+  <rect x="40" y="60" width="120" height="100" fill="#0d6efd" rx="5"/>
+  
+  <!-- Windows -->
+  <rect x="55" y="75" width="20" height="15" fill="#ffffff" rx="2"/>
+  <rect x="90" y="75" width="20" height="15" fill="#ffffff" rx="2"/>
+  <rect x="125" y="75" width="20" height="15" fill="#ffffff" rx="2"/>
+  
+  <rect x="55" y="100" width="20" height="15" fill="#ffffff" rx="2"/>
+  <rect x="90" y="100" width="20" height="15" fill="#ffffff" rx="2"/>
+  <rect x="125" y="100" width="20" height="15" fill="#ffffff" rx="2"/>
+  
+  <rect x="55" y="125" width="20" height="15" fill="#ffffff" rx="2"/>
+  <rect x="90" y="125" width="20" height="15" fill="#ffffff" rx="2"/>
+  <rect x="125" y="125" width="20" height="15" fill="#ffffff" rx="2"/>
+  
+  <!-- Door -->
+  <rect x="85" y="145" width="30" height="15" fill="#ffffff" rx="2"/>
+  
+  <!-- Roof -->
+  <polygon points="100,40 40,60 160,60" fill="#0b5ed7"/>
+  
+  <!-- Key Icon (booking symbol) -->
+  <circle cx="165" cy="100" r="15" fill="#ffc107" opacity="0.9"/>
+  <rect x="162" y="100" width="15" height="6" fill="#ffc107" opacity="0.9"/>
+  <rect x="172" y="98" width="2" height="2" fill="#0d6efd"/>
+  <rect x="172" y="104" width="2" height="2" fill="#0d6efd"/>
+</svg>
