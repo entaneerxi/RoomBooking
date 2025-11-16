@@ -1,0 +1,71 @@
+@model IEnumerable<RoomBooking.Models.Booking>
+@{
+    ViewData["Title"] = "Manage Bookings";
+}
+
+<div class="mb-3">
+    <div class="btn-group" role="group">
+        <a asp-action="Index" class="btn @(string.IsNullOrEmpty(Context.Request.Query["status"]) ? "btn-primary" : "btn-outline-primary")">All</a>
+        <a asp-action="Index" asp-route-status="Pending" class="btn @(Context.Request.Query["status"] == "Pending" ? "btn-primary" : "btn-outline-primary")">Pending</a>
+        <a asp-action="Index" asp-route-status="Confirmed" class="btn @(Context.Request.Query["status"] == "Confirmed" ? "btn-primary" : "btn-outline-primary")">Confirmed</a>
+        <a asp-action="Index" asp-route-status="CheckedIn" class="btn @(Context.Request.Query["status"] == "CheckedIn" ? "btn-primary" : "btn-outline-primary")">Checked In</a>
+        <a asp-action="Index" asp-route-status="PostponeRequested" class="btn @(Context.Request.Query["status"] == "PostponeRequested" ? "btn-primary" : "btn-outline-primary")">Postpone Requests</a>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Guest</th>
+                            <th>Room</th>
+                            <th>Type</th>
+                            <th>Check-In</th>
+                            <th>Check-Out</th>
+                            <th>Status</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var booking in Model)
+                        {
+                            <tr>
+                                <td>#@booking.Id</td>
+                                <td>@booking.User?.FirstName @booking.User?.LastName</td>
+                                <td>@booking.Room?.Name<br><small class="text-muted">@booking.Room?.RoomNumber</small></td>
+                                <td>@booking.BookingType</td>
+                                <td>@booking.CheckInDate.ToString("MMM dd, yyyy")</td>
+                                <td>@booking.CheckOutDate.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <span class="badge @(booking.Status == RoomBooking.Models.BookingStatus.Confirmed ? "bg-success" : 
+                                                         booking.Status == RoomBooking.Models.BookingStatus.Pending ? "bg-warning" : 
+                                                         booking.Status == RoomBooking.Models.BookingStatus.CheckedIn ? "bg-info" : "bg-secondary")">
+                                        @booking.Status
+                                    </span>
+                                </td>
+                                <td>$@booking.FinalAmount</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Details" asp-route-id="@booking.Id" class="btn btn-outline-primary" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">No bookings found.</p>
+        }
+    </div>
+</div>

@@ -1,0 +1,130 @@
+@model RoomBooking.ViewModels.PaymentViewModel
+@{
+    ViewData["Title"] = "Make Payment";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h4>Make Payment</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                        
+                        <input type="hidden" asp-for="BookingId" />
+                        
+                        <div class="mb-4">
+                            <h5>Select Payment Method</h5>
+                            @if (Model.PaymentMethods != null && Model.PaymentMethods.Any())
+                            {
+                                <div class="list-group">
+                                    @foreach (var method in Model.PaymentMethods)
+                                    {
+                                        <label class="list-group-item">
+                                            <input type="radio" asp-for="PaymentMethodId" value="@method.Id" class="form-check-input me-2" required>
+                                            <strong>@method.Name</strong>
+                                            @if (!string.IsNullOrEmpty(method.Description))
+                                            {
+                                                <small class="d-block text-muted">@method.Description</small>
+                                            }
+                                            @if (method.Type == RoomBooking.Models.PaymentMethodType.BankTransfer && !string.IsNullOrEmpty(method.BankName))
+                                            {
+                                                <small class="d-block text-muted">
+                                                    Bank: @method.BankName<br>
+                                                    Account: @method.AccountNumber<br>
+                                                    Name: @method.AccountName
+                                                </small>
+                                            }
+                                            @if (!string.IsNullOrEmpty(method.QRCodeImageUrl))
+                                            {
+                                                <img src="@method.QRCodeImageUrl" alt="QR Code" class="img-thumbnail mt-2" style="max-width: 200px;">
+                                            }
+                                        </label>
+                                    }
+                                </div>
+                                <span asp-validation-for="PaymentMethodId" class="text-danger"></span>
+                            }
+                            else
+                            {
+                                <div class="alert alert-warning">No payment methods available.</div>
+                            }
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="TransactionReference" class="form-label"></label>
+                            <input asp-for="TransactionReference" class="form-control" placeholder="Enter transaction or reference number" />
+                            <span asp-validation-for="TransactionReference" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="PaymentProof" class="form-label"></label>
+                            <input asp-for="PaymentProof" class="form-control" type="file" accept="image/*,.pdf" />
+                            <span asp-validation-for="PaymentProof" class="text-danger"></span>
+                            <small class="form-text text-muted">Upload receipt or proof of payment (Image or PDF)</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Notes" class="form-label"></label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Any additional notes..."></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-credit-card"></i> Submit Payment
+                            </button>
+                            <a asp-controller="Bookings" asp-action="Details" asp-route-id="@Model.BookingId" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5>Booking Summary</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Booking != null)
+                    {
+                        <p><strong>Booking ID:</strong> #@Model.Booking.Id</p>
+                        <p><strong>Room:</strong> @Model.Booking.Room?.Name</p>
+                        <p><strong>Check-In:</strong> @Model.Booking.CheckInDate.ToString("MMM dd, yyyy")</p>
+                        <p><strong>Check-Out:</strong> @Model.Booking.CheckOutDate.ToString("MMM dd, yyyy")</p>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Total Amount:</span>
+                            <strong>$@Model.Booking.TotalAmount</strong>
+                        </div>
+                        @if (Model.Booking.DiscountAmount.HasValue && Model.Booking.DiscountAmount.Value > 0)
+                        {
+                            <div class="d-flex justify-content-between mb-2 text-success">
+                                <span>Discount:</span>
+                                <strong>-$@Model.Booking.DiscountAmount</strong>
+                            </div>
+                        }
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <span><strong>Amount to Pay:</strong></span>
+                            <strong class="text-primary fs-5">$@Model.Booking.FinalAmount</strong>
+                        </div>
+                    }
+                </div>
+            </div>
+            
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-info-circle"></i> Your payment will be verified by our staff. You will receive confirmation once approved.
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,94 @@
+@model IEnumerable<RoomBooking.Models.Room>
+@{
+    ViewData["Title"] = "Available Rooms";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Available Rooms</h1>
+    
+    <!-- Filter Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Room Type</label>
+                    <select name="roomType" class="form-select">
+                        <option value="">All Types</option>
+                        @foreach (var type in ViewBag.RoomTypes as List<string>)
+                        {
+                            <option value="@type" selected="@(Context.Request.Query["roomType"] == type)">@type</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Min Price</label>
+                    <input type="number" name="minPrice" class="form-control" value="@Context.Request.Query["minPrice"]" placeholder="Min daily rate" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Max Price</label>
+                    <input type="number" name="maxPrice" class="form-control" value="@Context.Request.Query["maxPrice"]" placeholder="Max daily rate" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Rooms Grid -->
+    <div class="row">
+        @if (Model.Any())
+        {
+            @foreach (var room in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrEmpty(room.ImageUrl))
+                        {
+                            <img src="@room.ImageUrl" class="card-img-top" alt="@room.Name" style="height: 200px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="fas fa-door-open fa-3x"></i>
+                            </div>
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@room.Name</h5>
+                            <p class="card-text text-muted small">@room.RoomNumber</p>
+                            <p class="card-text">@room.Description</p>
+                            <div class="mb-2">
+                                <span class="badge bg-info">@room.RoomType</span>
+                                <span class="badge bg-secondary">Capacity: @room.Capacity</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong>$@room.DailyRate</strong>/day<br/>
+                                    <strong>$@room.MonthlyRate</strong>/month
+                                </div>
+                                <span class="badge @(room.Status == RoomBooking.Models.RoomStatus.Available ? "bg-success" : "bg-warning")">
+                                    @room.Status
+                                </span>
+                            </div>
+                            @if (!string.IsNullOrEmpty(room.Amenities))
+                            {
+                                <p class="card-text small"><i class="fas fa-check-circle text-success"></i> @room.Amenities</p>
+                            }
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a asp-action="Details" asp-route-id="@room.Id" class="btn btn-outline-primary btn-sm w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No rooms found matching your criteria.
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,92 @@
+@model RoomBooking.Models.Promotion
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Promotions</a></li>
+            <li class="breadcrumb-item active">@Model.Title</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.Title" style="max-height: 400px; object-fit: cover;">
+                }
+                <div class="card-body">
+                    <h2 class="card-title">@Model.Title</h2>
+                    <p class="text-muted">
+                        <i class="far fa-calendar"></i> Valid from @Model.StartDate.ToString("MMMM dd, yyyy") to @Model.EndDate.ToString("MMMM dd, yyyy")
+                    </p>
+                    
+                    <hr>
+                    
+                    <h4>Description</h4>
+                    <p>@Model.Description</p>
+                    
+                    @if (!string.IsNullOrEmpty(Model.TermsAndConditions))
+                    {
+                        <hr>
+                        <h5>Terms & Conditions</h5>
+                        <p class="small">@Model.TermsAndConditions</p>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Discount Details</h5>
+                    
+                    @if (Model.DiscountPercentage.HasValue)
+                    {
+                        <div class="alert alert-success">
+                            <h3 class="mb-0"><i class="fas fa-percent"></i> @Model.DiscountPercentage% OFF</h3>
+                        </div>
+                    }
+                    
+                    @if (Model.DiscountAmount.HasValue)
+                    {
+                        <div class="alert alert-success">
+                            <h3 class="mb-0"><i class="fas fa-dollar-sign"></i> Save $@Model.DiscountAmount</h3>
+                        </div>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(Model.PromoCode))
+                    {
+                        <hr>
+                        <label class="form-label">Promo Code</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="promoCode" value="@Model.PromoCode" readonly>
+                            <button class="btn btn-primary" type="button" onclick="copyPromoCode()">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <small class="form-text text-muted">Use this code when booking</small>
+                    }
+                </div>
+            </div>
+            
+            <a asp-controller="Rooms" asp-action="Index" class="btn btn-primary w-100">
+                <i class="fas fa-door-open"></i> Browse Rooms
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function copyPromoCode() {
+            var code = document.getElementById('promoCode').value;
+            navigator.clipboard.writeText(code).then(function() {
+                showNotification('success', 'Copied!', 'Promo code copied to clipboard');
+            });
+        }
+    </script>
+}

@@ -1,0 +1,85 @@
+@model IEnumerable<RoomBooking.Models.Promotion>
+@{
+    ViewData["Title"] = "Promotions";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Current Promotions</h1>
+    
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var promotion in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow">
+                        @if (!string.IsNullOrEmpty(promotion.ImageUrl))
+                        {
+                            <img src="@promotion.ImageUrl" class="card-img-top" alt="@promotion.Title" style="height: 200px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="bg-gradient bg-primary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="fas fa-tags fa-3x"></i>
+                            </div>
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@promotion.Title</h5>
+                            <p class="card-text">@promotion.Description</p>
+                            
+                            @if (promotion.DiscountPercentage.HasValue)
+                            {
+                                <div class="alert alert-success mb-2">
+                                    <i class="fas fa-percent"></i> <strong>@promotion.DiscountPercentage%</strong> OFF
+                                </div>
+                            }
+                            @if (promotion.DiscountAmount.HasValue)
+                            {
+                                <div class="alert alert-success mb-2">
+                                    <i class="fas fa-dollar-sign"></i> Save <strong>$@promotion.DiscountAmount</strong>
+                                </div>
+                            }
+                            
+                            @if (!string.IsNullOrEmpty(promotion.PromoCode))
+                            {
+                                <div class="mb-2">
+                                    <small class="text-muted">Promo Code:</small>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" class="form-control" value="@promotion.PromoCode" readonly>
+                                        <button class="btn btn-outline-secondary" type="button" onclick="copyPromoCode('@promotion.PromoCode')">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                            
+                            <p class="card-text small text-muted">
+                                <i class="far fa-calendar"></i> Valid: @promotion.StartDate.ToString("MMM dd") - @promotion.EndDate.ToString("MMM dd, yyyy")
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a asp-action="Details" asp-route-id="@promotion.Id" class="btn btn-outline-primary btn-sm w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <h4><i class="fas fa-info-circle"></i> No Active Promotions</h4>
+            <p>There are no active promotions at the moment. Check back later!</p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function copyPromoCode(code) {
+            navigator.clipboard.writeText(code).then(function() {
+                showNotification('success', 'Copied!', 'Promo code copied to clipboard');
+            });
+        }
+    </script>
+}

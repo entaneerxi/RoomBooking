@@ -1,0 +1,138 @@
+@model RoomBooking.ViewModels.BookingViewModel
+@{
+    ViewData["Title"] = "Book Room";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Book @Model.Room?.Name</h2>
+                    
+                    <form asp-action="Create" method="post" id="bookingForm">
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                        
+                        <input type="hidden" asp-for="RoomId" />
+                        
+                        <div class="mb-3">
+                            <label asp-for="BookingType" class="form-label"></label>
+                            <select asp-for="BookingType" class="form-select" id="bookingType">
+                                <option value="0">Daily</option>
+                                <option value="1">Monthly</option>
+                            </select>
+                            <span asp-validation-for="BookingType" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CheckInDate" class="form-label"></label>
+                                <input asp-for="CheckInDate" class="form-control" type="date" id="checkInDate" />
+                                <span asp-validation-for="CheckInDate" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CheckOutDate" class="form-label"></label>
+                                <input asp-for="CheckOutDate" class="form-control" type="date" id="checkOutDate" />
+                                <span asp-validation-for="CheckOutDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="NumberOfGuests" class="form-label"></label>
+                            <input asp-for="NumberOfGuests" class="form-control" type="number" min="1" max="@Model.Room?.Capacity" />
+                            <span asp-validation-for="NumberOfGuests" class="text-danger"></span>
+                            <small class="form-text text-muted">Maximum capacity: @Model.Room?.Capacity</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="SpecialRequests" class="form-label"></label>
+                            <textarea asp-for="SpecialRequests" class="form-control" rows="3" placeholder="Any special requests or requirements..."></textarea>
+                            <span asp-validation-for="SpecialRequests" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="PromoCode" class="form-label"></label>
+                            <input asp-for="PromoCode" class="form-control" placeholder="Enter promo code (optional)" />
+                            <span asp-validation-for="PromoCode" class="text-danger"></span>
+                        </div>
+                        
+                        <div id="availabilityStatus" class="alert" style="display:none;"></div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="fas fa-calendar-check"></i> Confirm Booking
+                            </button>
+                            <a asp-controller="Rooms" asp-action="Details" asp-route-id="@Model.RoomId" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Room Summary</h5>
+                    <div class="mb-3">
+                        <img src="@(Model.Room?.ImageUrl ?? "/images/default-room.jpg")" class="img-fluid rounded" alt="@Model.Room?.Name">
+                    </div>
+                    <h6>@Model.Room?.Name</h6>
+                    <p class="text-muted small">@Model.Room?.RoomNumber</p>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span>Daily Rate:</span>
+                        <strong>$@Model.Room?.DailyRate</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Monthly Rate:</span>
+                        <strong>$@Model.Room?.MonthlyRate</strong>
+                    </div>
+                    <hr>
+                    <div class="alert alert-info small">
+                        <i class="fas fa-info-circle"></i> Total amount will be calculated based on your booking dates and type.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            var today = new Date().toISOString().split('T')[0];
+            $('#checkInDate').attr('min', today);
+            
+            $('#checkInDate, #checkOutDate').on('change', function() {
+                checkAvailability();
+            });
+            
+            function checkAvailability() {
+                var checkIn = $('#checkInDate').val();
+                var checkOut = $('#checkOutDate').val();
+                var roomId = @Model.RoomId;
+                
+                if (checkIn && checkOut) {
+                    $.ajax({
+                        url: '@Url.Action("CheckAvailability", "Rooms")',
+                        type: 'GET',
+                        data: { roomId: roomId, checkIn: checkIn, checkOut: checkOut },
+                        success: function(data) {
+                            if (data.available) {
+                                $('#availabilityStatus').removeClass('alert-danger').addClass('alert-success')
+                                    .html('<i class="fas fa-check"></i> Room is available for selected dates').show();
+                                $('#submitBtn').prop('disabled', false);
+                            } else {
+                                $('#availabilityStatus').removeClass('alert-success').addClass('alert-danger')
+                                    .html('<i class="fas fa-times"></i> Room is not available for selected dates').show();
+                                $('#submitBtn').prop('disabled', true);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+}
